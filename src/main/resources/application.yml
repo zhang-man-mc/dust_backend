@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    ds1:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+#      生产环境
+#      url: jdbc:mysql://localhost:3306/fume?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+#      username: fume
+#      password: fume_feiyu2023
+
+      url: jdbc:mysql://localhost:3306/qianduan_sql?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+      username: root
+      password: 1234
+
+#      url: jdbc:mysql://localhost:3306/fume?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+#      username: root
+#      password: 123456
+
+#      url: jdbc:mysql://114.215.109.124:3306/fume?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+#      username: fumeRemote
+#      password: feiyu2023
+
+mybatis:
+  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.flightfeather.monitor.domain.ds1.entity
+  mapper-locations: classpath*:mapper/**/*.xml
+
+# 通用 Mapper 配置
+# mappers 多个接口时逗号隔开
+mapper:
+  mappers: com.flightfeather.monitor.domain.util.MyMapper
+  not-empty: false
+  identity: MYSQL
+
+server:
+  port: 8081

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustSiteDataMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustSiteData">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mn_code" jdbcType="VARCHAR" property="mnCode" />
+    <result column="dust_value" jdbcType="DOUBLE" property="dustValue" />
+    <result column="noise_value" jdbcType="DOUBLE" property="noiseValue" />
+    <result column="lst" jdbcType="TIMESTAMP" property="lst" />
+    <result column="quality" jdbcType="VARCHAR" property="quality" />
+    <result column="grade" jdbcType="INTEGER" property="grade" />
+    <result column="flag" jdbcType="VARCHAR" property="flag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, mn_code, dust_value, noise_value, lst, quality, grade, flag
+  </sql>
+</mapper>

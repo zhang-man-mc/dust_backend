@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.mapper.RiskAnalysisMapper">
+
+    <select id="queryRiskDataByMonth" resultType="com.flightfeather.monitor.domain.ds1.entity.RiskValue">
+        select b.name,a.*
+        from du_js_t_risk_value as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="siteName != null and siteName != '' ">
+                b.name = #{siteName}
+            </if>
+
+            <if test="month != null and month != '' ">
+                and  a.lst = #{month}
+            </if>
+
+            <if test="type != null and type != '' ">
+                and a.type = #{type}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

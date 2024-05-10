@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.RequestTaskSettingMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.RequestTaskSetting">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="request_start_time" jdbcType="TIMESTAMP" property="requestStartTime" />
+    <result column="request_end_time" jdbcType="TIMESTAMP" property="requestEndTime" />
+    <result column="request_interval_seconds" jdbcType="INTEGER" property="requestIntervalSeconds" />
+    <result column="request_range_hour" jdbcType="INTEGER" property="requestRangeHour" />
+    <result column="request_range_interval_seconds" jdbcType="INTEGER" property="requestRangeIntervalSeconds" />
+    <result column="request_fail_wait_seconds" jdbcType="INTEGER" property="requestFailWaitSeconds" />
+    <result column="request_retry_times" jdbcType="INTEGER" property="requestRetryTimes" />
+    <result column="statics_daily_time" jdbcType="TIMESTAMP" property="staticsDailyTime" />
+    <result column="statics_monthly_time" jdbcType="TIMESTAMP" property="staticsMonthlyTime" />
+    <result column="login_fail_wait_seconds" jdbcType="INTEGER" property="loginFailWaitSeconds" />
+    <result column="login_retry_times" jdbcType="INTEGER" property="loginRetryTimes" />
+    <result column="task_retry_wait_seconds" jdbcType="INTEGER" property="taskRetryWaitSeconds" />
+    <result column="first_request_offset_days" jdbcType="INTEGER" property="firstRequestOffsetDays" />
+    <result column="request_cookie_valid_duration" jdbcType="INTEGER" property="requestCookieValidDuration" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, user, update_time, region, version, request_start_time, request_end_time, request_interval_seconds, 
+    request_range_hour, request_range_interval_seconds, request_fail_wait_seconds, request_retry_times, 
+    statics_daily_time, statics_monthly_time, login_fail_wait_seconds, login_retry_times, 
+    task_retry_wait_seconds, first_request_offset_days, request_cookie_valid_duration
+  </sql>
+</mapper>

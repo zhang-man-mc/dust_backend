@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustExceptionSettingMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustExceptionSetting">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="miss_data_minutes" jdbcType="INTEGER" property="missDataMinutes" />
+    <result column="data_low" jdbcType="DOUBLE" property="dataLow" />
+    <result column="long_time_no_change" jdbcType="INTEGER" property="longTimeNoChange" />
+    <result column="mutation_num" jdbcType="INTEGER" property="mutationNum" />
+    <result column="mutation_rate" jdbcType="DOUBLE" property="mutationRate" />
+    <result column="near_exceed_low_value" jdbcType="DOUBLE" property="nearExceedLowValue" />
+    <result column="near_exceed_high_value" jdbcType="DOUBLE" property="nearExceedHighValue" />
+    <result column="near_exceed_num" jdbcType="INTEGER" property="nearExceedNum" />
+    <result column="day_exceed_borderline_low_num" jdbcType="INTEGER" property="dayExceedBorderlineLowNum" />
+    <result column="day_exceed_borderline_high_num" jdbcType="INTEGER" property="dayExceedBorderlineHighNum" />
+    <result column="change_trend_group" jdbcType="INTEGER" property="changeTrendGroup" />
+    <result column="change_trend_interval" jdbcType="INTEGER" property="changeTrendInterval" />
+    <result column="change_trend_rate" jdbcType="DOUBLE" property="changeTrendRate" />
+    <result column="change_trend_times" jdbcType="INTEGER" property="changeTrendTimes" />
+    <result column="exceeding_standard" jdbcType="DOUBLE" property="exceedingStandard" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, user, update_time, region, version, miss_data_minutes, data_low, long_time_no_change, 
+    mutation_num, mutation_rate, near_exceed_low_value, near_exceed_high_value, near_exceed_num, 
+    day_exceed_borderline_low_num, day_exceed_borderline_high_num, change_trend_group, 
+    change_trend_interval, change_trend_rate, change_trend_times, exceeding_standard
+  </sql>
+</mapper>

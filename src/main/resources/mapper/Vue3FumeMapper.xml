@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.mapper.Vue3FumeMapper">
+
+<!--   超标油烟查询-->
+    <select id="conditionQuery" resultType="com.flightfeather.monitor.pojo.FumeHistoryData">
+        SELECT a1.MV_ID, a1.MV_Stat_Code, b.DI_Name,b.DI_Supplier, a1.MV_Create_Time, a1.MV_Data_Time, a1.MV_Fume_Concentration2
+        FROM exceeding_st_data AS a1
+        INNER JOIN ea_t_device_info AS b ON a1.MV_Stat_Code = b.DI_Code
+        <where>
+            <if test="devId != null and devId != '' ">
+                a1.MV_Stat_Code = #{devId}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and a1.MV_Data_Time between #{beginTime} and #{endTime}
+            </if>
+        </where>
+        order by a1.MV_Data_Time asc
+    </select>
+
+    <!--    历史油烟查询-->
+<!--    <select id="conditionQueryHistory" resultType="FumeHistoryData">-->
+<!--        SELECT d.DI_Name, c.*-->
+<!--        FROM (-->
+<!--        SELECT a.*-->
+<!--        FROM fd_t_minutevalue as a-->
+<!--        LEFT JOIN fd_t_minutevalue  as b ON a.MV_Data_Time = b.MV_Data_Time AND a.MV_Isduplication &lt; b.MV_Isduplication-->
+<!--        WHERE b.MV_ID IS NULL AND a.MV_Stat_Code = #{devId})-->
+<!--        as c join ea_t_device_info as d on c.MV_Stat_Code =  d.DI_Code-->
+<!--        <where>-->
+<!--            <if test="devId != null and devId != '' ">-->
+<!--                and c.MV_Stat_Code = #{devId}-->
+<!--            </if>-->
+
+<!--            <if test="beginTime != null and endTime != null">-->
+<!--                AND c.MV_Data_Time between  #{beginTime} AND  #{endTime}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        ORDER BY c.MV_Data_Time ASC;-->
+<!--    </select>-->
+    <!--    历史油烟查询 修改了语句-->
+    <select id="conditionQueryHistory" resultType="com.flightfeather.monitor.pojo.FumeHistoryData">
+        SELECT d.DI_Name, c.*
+        FROM (
+        SELECT a.*
+        FROM fd_t_minutevalue AS a
+        INNER JOIN (
+        SELECT MV_Stat_Code,MV_Data_Time, MAX(MV_Isduplication) AS Max_Isduplication
+        FROM fd_t_minutevalue
+        WHERE MV_Stat_Code = #{devId}
+        GROUP BY MV_Data_Time
+        ) AS b ON a.MV_Data_Time = b.MV_Data_Time AND a.MV_Isduplication = b.Max_Isduplication AND a.MV_Stat_Code = b.MV_Stat_Code
+        WHERE a.MV_Stat_Code = #{devId}
+        ) AS c
+        JOIN ea_t_device_info AS d ON c.MV_Stat_Code = d.DI_Code
+        <where>
+            <if test="beginTime != null and endTime != null">
+                c.MV_Data_Time >= #{beginTime} AND c.MV_Data_Time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY c.MV_Data_Time ASC;
+    </select>
+
+
+
+
+
+
+<!--    条件查询异常表-->
+    <select id="conditonQueryAbnormalData" resultType="com.flightfeather.monitor.pojo.FumeAbnormalData">
+        select a1.dev_id,b.DI_Name,a1.exception_type,a1.region,a1.begin_time,a1.end_time
+        from abnormal_data as a1 join ea_t_device_info as b on  a1.dev_id =  b.DI_Code
+        <where>
+
+            <if test="devId != null and devId != '' ">
+                and a1.dev_id = #{devId} and b.DI_Code = #{devId}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a1.begin_time between #{beginTime} and #{endTime} or a1.end_time between #{beginTime} and  #{endTime})
+            </if>
+
+        </where>
+
+    </select>
+
+    <!--    条件查询异常表 增加了异常类型选项-->
+    <select id="conditonQueryAbnormalData1" resultType="com.flightfeather.monitor.pojo.FumeAbnormalData">
+        select a1.dev_id,b.DI_Name,a1.exception,a1.exception_type,a1.region,a1.begin_time,a1.end_time
+        from abnormal_data as a1 join ea_t_device_info as b on a1.dev_id =  b.DI_Code
+        <where>
+
+            <if test="devId != null and devId != '' ">
+                and a1.dev_id = #{devId} and b.DI_Code = #{devId}
+            </if>
+
+            <if test="exceptionValue != null and exceptionValue != '' ">
+                and a1.exception_type = #{exceptionValue}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a1.begin_time between #{beginTime} and #{endTime} or a1.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+    </select>
+
+    <!--根据店铺名选择到处为Excel -->
+    <select id="exportByShopName" resultType="com.flightfeather.monitor.pojo.FumeHistoryData">
+        SELECT a.MV_Stat_Code, b.DI_Name, a.MV_Data_Time, a.MV_Fan_Electricity,a.MV_Purifier_Electricity,a.MV_Fume_Concentration2
+        FROM fd_t_minutevalue AS a
+        JOIN ea_t_device_info AS b ON a.MV_Stat_Code = b.DI_Code
+        <where>
+            <if test="a != null and a != ''">
+                b.DI_Name IN
+             <foreach item="item" collection="a" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+            </if>
+            <if test="exportBeginTime != null and exportEndTime != null">
+                and a.MV_Data_Time between  #{exportBeginTime} and #{exportEndTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 多选店铺名 返回多选店铺最新一条数据-->
+    <select id="findLaststById" resultType="com.flightfeather.monitor.pojo.FumeHistoryData">
+        SELECT a.MV_Stat_Code, b.DI_Name, b.DI_Supplier, a.MV_Data_Time,a.MV_Fan_Electricity,a.MV_Purifier_Electricity,a.MV_Fume_Concentration2
+        FROM fd_t_minutevalue as a
+        JOIN ea_t_device_info  as b ON a.MV_Stat_Code = b.DI_Code
+        JOIN (
+        SELECT MV_Stat_Code, MAX(MV_Data_Time) AS 最新时间
+        FROM fd_t_minutevalue
+        GROUP BY MV_Stat_Code
+        ) as c ON a.MV_Stat_Code = c.MV_Stat_Code AND a.MV_Data_Time = c.最新时间
+        <where>
+            <if test="shops != null and shops != ''">
+                b.DI_Name IN
+                <foreach item="item" collection="shops" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!-- 条件组合查询异常表  异常类型选项改为多选-->
+    <select id="conditonQueryAbnormalData2" resultType="com.flightfeather.monitor.pojo.FumeAbnormalData">
+        select a1.dev_id,b.DI_Name,b.DI_Supplier,a1.exception,a1.exception_type,a1.region,a1.begin_time,a1.end_time
+        from abnormal_data as a1 join ea_t_device_info as b on  a1.dev_id =  b.DI_Code
+        <where>
+
+            <if test="devId != null and devId != '' ">
+                and a1.dev_id = #{devId}
+            </if>
+
+            <if test="exceptionValue != null and exceptionValue != '' ">
+                and a1.exception_type in
+                <foreach item="item" collection="exceptionValue" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a1.begin_time between #{beginTime} and #{endTime} or a1.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 条件组合查询异常表  异常类型选项改为多选-->
+    <select id="conditonQueryAbnormalData3" resultType="com.flightfeather.monitor.pojo.FumeAbnormalData">
+        select a1.dev_id,b.DI_Name,a1.exception,a1.exception_type,a1.region,a1.begin_time,a1.end_time
+        from abnormal_data as a1 join ea_t_device_info as b on a1.dev_id =  b.DI_Code
+        <where>
+            <if test="devId != null and devId != '' ">
+                and a1.dev_id = #{devId} and b.DI_Code = #{devId}
+            </if>
+
+            <if test="exceptionValue != null and exceptionValue != '' ">
+                and a1.exception_type in
+                <foreach item="item" collection="exceptionValue" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a1.begin_time between #{beginTime} and #{endTime} or a1.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+    </select>
+
+    <select id="findShopNameBYTime" resultType="com.flightfeather.monitor.pojo.FumeAbnormalData">
+        SELECT DISTINCT b.DI_Name,a.dev_id
+        FROM abnormal_data AS a
+        JOIN ea_t_device_info AS b ON a.dev_id = b.DI_Code
+        <where>
+            <if test="exceptionType != null and exceptionType != '' ">
+                a.exception_type = #{exceptionType}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+    </select>
+
+</mapper>

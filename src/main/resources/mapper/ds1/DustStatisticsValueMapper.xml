@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustStatisticsValueMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustStatisticsValue">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mn_code" jdbcType="VARCHAR" property="mnCode" />
+    <result column="lst" jdbcType="DATE" property="lst" />
+    <result column="day_avg" jdbcType="DOUBLE" property="dayAvg" />
+    <result column="min" jdbcType="DOUBLE" property="min" />
+    <result column="max" jdbcType="DOUBLE" property="max" />
+    <result column="day_online" jdbcType="DOUBLE" property="dayOnline" />
+    <result column="day_valid" jdbcType="DOUBLE" property="dayValid" />
+    <result column="day_exceeding" jdbcType="DOUBLE" property="dayExceeding" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, mn_code, lst, day_avg, min, max, day_online, day_valid, day_exceeding, type
+  </sql>
+
+    <insert id="dailyStatics">
+        insert into dust_statistics_value(mn_code,lst,day_avg,min,max,day_online,day_valid,day_exceeding,type)
+        select a.*
+        from (select
+        mn_code as mn_code,
+        DATE(lst) as lst,
+        ROUND(AVG(dust_value),3) as day_avg,
+        min(dust_value) as min,
+        max(dust_value) as max,
+        ROUND(COUNT(*)/96, 4) as day_online,
+        ROUND(SUM(CASE WHEN dust_value &gt;0 THEN 1 ELSE 0 END)/96, 4) as day_valid,
+        ROUND(SUM(CASE WHEN dust_value &gt;= 1 THEN 1 ELSE 0 END)/96, 4) as day_exceeding,
+        'day' as type
+        from ja_t_dust_site_data_info
+        where lst between #{beginTime} and #{endTime}
+        GROUP BY mn_code,DATE(lst)
+        ) as a
+    </insert>
+    <insert id="monthlyStatics">
+        insert into dust_statistics_value(mn_code,lst,day_avg,min,max,day_online,day_valid,day_exceeding,type)
+        select a.*
+        from (
+        SELECT
+        mn_code AS mn_code,
+        DATE_FORMAT(lst, '%Y-%m-01') AS month,
+        ROUND(AVG(dust_value), 3) AS month_avg,
+        MIN(dust_value) AS min,
+        MAX(dust_value) AS max,
+        ROUND(COUNT(*) / #{count}, 4) AS month_online,
+        ROUND(SUM(CASE WHEN flag = 'N' OR flag = 'A' THEN 1 ELSE 0 END) / #{count}, 4) AS month_valid,
+        ROUND(SUM(CASE WHEN dust_value &gt;= 1 THEN 1 ELSE 0 END) / #{count}, 4) AS month_exceeding,
+        'month' as type
+        FROM ja_t_dust_site_data_info
+        WHERE lst BETWEEN #{beginTime} and #{endTime}
+        GROUP BY mn_code, DATE_FORMAT(lst, '%Y-%m-01')
+        ) as a
+    </insert>
+
+    <!--    根据站点名字和时段进行统计分析-->
+    <select id="selectByOrder" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">
+        select c.name,d.*
+        from dust_statistics_value as d
+        left join ja_t_dust_site_info as c on c.mn_code = d.mn_code
+        <where>
+            <if test="siteName != null and siteName != ''">
+                and c.name = #{siteName}
+            </if>
+            <if test="beginTime != null and endTime != null">
+                and d.lst between #{beginTime} and #{endTime} and d.type = 'day'
+            </if>
+        </where>
+        <if test="orderProp == 'lst'">
+            order by d.lst
+        </if>
+        <if test="orderProp == 'day_avg'">
+            order by d.day_avg
+        </if>
+        <if test="orderProp == 'min'">
+            order by d.min
+        </if>
+        <if test="orderProp == 'max'">
+            order by d.max
+        </if>
+        <if test="orderProp == 'day_online'">
+            order by d.day_online
+        </if>
+        <if test="orderProp == 'day_valid'">
+            order by d.day_valid
+        </if>
+        <if test="orderProp == 'day_exceeding'">
+            order by d.day_exceeding
+        </if>
+        <if test="orderProp != null and asc">
+            asc
+        </if>
+        <if test="orderProp != null and !asc">
+            desc
+        </if>
+    </select>
+</mapper>

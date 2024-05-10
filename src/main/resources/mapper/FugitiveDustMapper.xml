@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.mapper.FugitiveDustMapper">
+    <update id="update">
+        update audit_info
+        <set>
+            <if test="exceptionId != null and exceptionId!=''" >
+                exception_id = #{exceptionId},
+            </if>
+            <if test="checker != null and checker!=''" >
+                checker = #{checker},
+            </if>
+
+            <if test="checkerContent != null and checkerContent!=''" >
+                checker_content = #{checkerContent} ,
+            </if>
+            <if test="enterpriseContent != null and enterpriseContent!=''" >
+                enterprise_content = #{enterpriseContent},
+            </if>
+            <if test="auditStatus != null and auditStatus!=''" >
+                audit_status = #{auditStatus},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime}
+        </if>
+
+        </set>
+        where exception_id = #{exceptionId}
+    </update>
+
+    <select id="conditonQueryDustHistoryData" resultType="com.flightfeather.monitor.pojo.DustSiteData">
+        select a.*,b.*
+        from ja_t_dust_site_data_info as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="siteName !=null and siteName != ''">
+<!--                b.name like concat('%',#{siteName},'%')-->
+                b.name = #{siteName}
+            </if>
+            <if test="mnCode !=null and mnCode != ''">
+                and a.mn_code = #{mnCode}
+            </if>
+            <if test="beginTime != null and endTime != null">
+                and a.lst between #{beginTime} and #{endTime}
+            </if>
+
+            <if test="scenarioType != null and scenarioType != '' ">
+                and b.typename in
+                <foreach item="item" collection="scenarioType" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+<!--    limit 0,1000-->
+    </select>
+
+<!--分析数据-->
+    <select id="analysisdata" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">
+        select a.*,b.name,b.duty_company from dust_statistics_value as a join ja_t_dust_site_info as b on a.mn_code = b. mn_code
+        <where>
+            <if test="siteName !=null and siteName != ''">
+                b.name = #{siteName}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and a.Lst between #{beginTime} and #{endTime} and a.type = #{type}
+            </if>
+        </where>
+    </select>
+
+
+<!--    &lt;!&ndash;    根据站点名字和时段进行统计分析&ndash;&gt;-->
+<!--    <select id="analysisByTime" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">-->
+<!--        select  c.name,d.*-->
+<!--        from ja_t_dust_site_info as c  join-->
+<!--        (-->
+<!--        select-->
+<!--        mn_code as mn_code,-->
+<!--        DATE(lst) as lst,-->
+<!--        ROUND(AVG(dust_value),3)  as day_avg,-->
+<!--        min(dust_value) as min,-->
+<!--        max(dust_value) as max,-->
+<!--        CONCAT(ROUND(COUNT(*)/96*100, 2), '%')  as day_online,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN dust_value >0 THEN 1 ELSE 0 END)/96 *100, 2), '%') as day_valid,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN dust_value >= 1  THEN 1 ELSE 0 END)/96*100,2),'%') as  day_exceeding-->
+<!--        from ja_t_dust_site_data_info-->
+<!--        <where>-->
+<!--&lt;!&ndash;            <if test="siteName !=null and siteName != ''">&ndash;&gt;-->
+<!--&lt;!&ndash;                b.name = #{siteName}&ndash;&gt;-->
+<!--&lt;!&ndash;            </if>&ndash;&gt;-->
+
+<!--            <if test="beginTime != null and endTime != null">-->
+<!--                lst between #{beginTime} and #{endTime}-->
+<!--            </if>-->
+
+<!--        </where>-->
+<!--        GROUP BY mn_code,DATE(lst)-->
+<!--        order by lst asc ) as d  on c.mn_code = d.mn_code-->
+<!--    </select>-->
+
+    <!--    根据站点名字和时段进行统计分析-->
+    <select id="analysisByTime" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">
+        select  c.name,d.*
+        from ja_t_dust_site_info as c  join dust_statistics_value as d  on c.mn_code = d.mn_code
+        <where>
+            <if test="beginTime != null and endTime != null">
+                d.lst between #{beginTime} and #{endTime} and d.type = 'day'
+            </if>
+        </where>
+        order by d.day_avg desc
+    </select>
+
+
+    <!--条件查询异常数据  加上了审计信息-->
+    <select id="getExceptionData" resultType="com.flightfeather.monitor.pojo.DustExceptionData">
+        select *
+        from (select a.* ,b.name,b.typename,b.address,b.duty_company
+        from dust_exception_data as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="siteName !=null and siteName != ''">
+                b.name like concat('%',#{siteName},'%')
+            </if>
+
+            <if test="exceptionType != null and exceptionType != '' ">
+                and a.exception_type in
+                <foreach item="item" collection="exceptionType" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+        )
+        as c left join audit_info as d  on c.id = d.exception_id
+    </select>
+
+
+
+    <!--   根据某段时间内某个异常类型查询对应的店铺名称和设备编号-->
+    <select id="getExceptionSitenameAndCode" resultType="com.flightfeather.monitor.pojo.DustExceptionData">
+        select DISTINCT b.name,a.mn_code
+        from dust_exception_data as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+
+        <where>
+            <if test="siteName !=null and siteName != ''">
+                b.name = #{siteName}
+            </if>
+            <if test="exceptionType !=null and exceptionType != ''">
+                and a.exception_type  = #{exceptionType}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+            <if test="street != null and street != '' ">
+                and b.address in
+                <foreach item="item" collection="street" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dutyCompany != null and dutyCompany != '' ">
+                and b.duty_company in
+                <foreach item="item" collection="dutyCompany" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+<!--    条件查询历史数据-->
+    <select id="conditonQueryHistoryData" resultType="com.flightfeather.monitor.pojo.DustSiteData">
+        select a.*,b.name,b.duty_Company
+        from ja_t_dust_site_data_info as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="siteName !=null and siteName != ''">
+                b.name  = #{siteName}
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and a.lst between #{beginTime} and #{endTime}
+            </if>
+        </where>
+        order by a.lst asc
+    </select>
+
+    <select id="getHasAuditedData" resultType="com.flightfeather.monitor.pojo.DustExceptionData">
+        select *
+        from dust_exception_data as a left join audit_info as b on a.id = b.exception_id
+        <where>
+            <if test="beginTime != null and endTime != null">
+                (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime}) and b.audit_status != 0
+
+            </if>
+        </where>
+
+    </select>
+    <select id="getSiteNameByTimeAndExceptionType" resultType="com.flightfeather.monitor.pojo.DustExceptionData">
+        select DISTINCT b.name
+        from dust_exception_data as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="exceptionType != null and exceptionType != '' ">
+                a.exception_type in
+                <foreach item="item" collection="exceptionType" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+        </where>
+
+    </select>
+    <select id="analysisdataByType" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">
+        select a.*,b.name,b.duty_company from dust_statistics_value as a join ja_t_dust_site_info as b on a.mn_code = b. mn_code
+        <where>
+            <if test="month != null and month != null">
+               a.lst  = #{month}
+            </if>
+
+            <if test="type != null and type != ''">
+                and a.type  = #{type}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="analysisdataByTimeAndType" resultType="com.flightfeather.monitor.pojo.AnalysisDustData">
+        select a.*,b.name,b.duty_company from dust_statistics_value as a join ja_t_dust_site_info as b on a.mn_code = b. mn_code
+        <where>
+            <if test="beginTime != null and endTime != null">
+                a.Lst between #{beginTime} and #{endTime}
+            </if>
+
+            <if test="type != null and type != ''">
+                and a.type  = #{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="getExceptionData2" resultType="com.flightfeather.monitor.pojo.DustExceptionData">
+
+       select a.* ,b.*
+        from dust_exception_data as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="street != null and street != '' ">
+                 b.address in
+                <foreach item="item" collection="street" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="dutyCompany != null and dutyCompany != '' ">
+                and b.duty_company in
+                <foreach item="item" collection="dutyCompany" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="siteName !=null and siteName != ''">
+                and b.name like concat('%',#{siteName},'%')
+            </if>
+
+            <if test="exceptionType != null and exceptionType != '' ">
+                and a.exception_type in
+                <foreach item="item" collection="exceptionType" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+
+
+
+        </where>
+
+    </select>
+    <select id="exceptionNum" resultType="java.lang.Integer">
+        select count(*)
+        from dust_exception_data as a join ja_t_dust_site_info as b on a.mn_code = b.mn_code
+        <where>
+            <if test="siteName !=null and siteName != ''">
+                b.name = #{siteName}
+            </if>
+            <if test="exceptionType != null and exceptionType != '' ">
+                and a.exception_type = #{exceptionType}
+            </if>
+
+            <if test="street != null and street != '' ">
+                and b.address in
+                <foreach item="item" collection="street" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="dutyCompany != null and dutyCompany != '' ">
+                and b.duty_company in
+                <foreach item="item" collection="dutyCompany" separator="," open="("  close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="beginTime != null and endTime != null">
+                and (a.begin_time between #{beginTime} and #{endTime} or a.end_time between #{beginTime} and  #{endTime})
+            </if>
+
+        </where>
+
+    </select>
+
+</mapper>

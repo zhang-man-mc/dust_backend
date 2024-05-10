@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustSiteStatusMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustSiteStatus">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="mn_code" jdbcType="VARCHAR" property="mnCode" />
+    <result column="latest_time" jdbcType="TIMESTAMP" property="latestTime" />
+    <result column="device_status" jdbcType="INTEGER" property="deviceStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    mn_code, latest_time, device_status
+  </sql>
+</mapper>

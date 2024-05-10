@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustSiteInfoMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustSiteInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mn_code" jdbcType="VARCHAR" property="mnCode" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate" />
+    <result column="duty_company" jdbcType="VARCHAR" property="dutyCompany" />
+    <result column="duty_company_id" jdbcType="VARCHAR" property="dutyCompanyId" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="engineering_stage" jdbcType="VARCHAR" property="engineeringStage" />
+    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="is_online" jdbcType="VARCHAR" property="isOnline" />
+    <result column="is_trouble" jdbcType="VARCHAR" property="isTrouble" />
+    <result column="jhpt_update_time" jdbcType="VARCHAR" property="jhptUpdateTime" />
+    <result column="kindex" jdbcType="VARCHAR" property="kindex" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="linkman" jdbcType="VARCHAR" property="linkman" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="ring_id" jdbcType="VARCHAR" property="ringId" />
+    <result column="ring_name" jdbcType="VARCHAR" property="ringName" />
+    <result column="type_id" jdbcType="VARCHAR" property="typeId" />
+    <result column="typename" jdbcType="VARCHAR" property="typename" />
+    <result column="stop_time" jdbcType="TIMESTAMP" property="stopTime" />
+    <result column="active" jdbcType="VARCHAR" property="active" />
+    <result column="trouble_num" jdbcType="INTEGER" property="troubleNum" />
+    <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime" />
+    <result column="stage_begin_date" jdbcType="TIMESTAMP" property="stageBeginDate" />
+    <result column="tsp" jdbcType="DOUBLE" property="tsp" />
+    <result column="union_type_id" jdbcType="VARCHAR" property="unionTypeId" />
+    <result column="wall_height" jdbcType="VARCHAR" property="wallHeight" />
+    <result column="ywsj_date" jdbcType="TIMESTAMP" property="ywsjDate" />
+    <result column="build_area" jdbcType="VARCHAR" property="buildArea" />
+    <result column="construction_unit" jdbcType="VARCHAR" property="constructionUnit" />
+    <result column="control_level" jdbcType="VARCHAR" property="controlLevel" />
+    <result column="developers" jdbcType="VARCHAR" property="developers" />
+    <result column="do_time" jdbcType="TIMESTAMP" property="doTime" />
+    <result column="has_monitor" jdbcType="VARCHAR" property="hasMonitor" />
+    <result column="data_time" jdbcType="TIMESTAMP" property="dataTime" />
+    <result column="engineering_stage_code" jdbcType="VARCHAR" property="engineeringStageCode" />
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode" />
+    <result column="floor_area" jdbcType="VARCHAR" property="floorArea" />
+    <result column="jhpt_delete" jdbcType="VARCHAR" property="jhptDelete" />
+    <result column="noise_region" jdbcType="VARCHAR" property="noiseRegion" />
+    <result column="responsible" jdbcType="VARCHAR" property="responsible" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, mn_code, address, name, code, begin_date, duty_company, duty_company_id, end_date, 
+    engineering_stage, group_id, group_name, is_online, is_trouble, jhpt_update_time, 
+    kindex, latitude, linkman, longitude, phone, province, ring_id, ring_name, type_id, 
+    typename, stop_time, active, trouble_num, insert_time, stage_begin_date, tsp, union_type_id, 
+    wall_height, ywsj_date, build_area, construction_unit, control_level, developers, 
+    do_time, has_monitor, data_time, engineering_stage_code, equipment_code, floor_area, 
+    jhpt_delete, noise_region, responsible
+  </sql>
+</mapper>

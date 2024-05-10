@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.mapper.SqlMapper">
+
+    <select id="list" resultType="com.flightfeather.monitor.pojo.OriginalData">
+        select * from ed_data
+        <where>
+            <if test="shopname != null and shopname != '' ">
+                shopname like concat('%',#{shopname},'%')
+            </if>
+
+            <if test="begin != null and end != null">
+                and reportingTime between #{begin} and #{end}
+            </if>
+        </where>
+        <!--    order by update_time desc-->
+    </select>
+
+
+
+    <select id="findByForm" resultType="com.flightfeather.monitor.pojo.OriginalData">
+        select * from ed_data
+        <where>
+            <if test="name != null and name != '' ">
+                shop_name like concat('%',#{name},'%')
+            </if>
+            <if test="number != null">
+                and equipment_number = #{number}
+            </if>
+            <if test="dname != null">
+                and equipment_name = #{dname}
+            </if>
+            <if test="begin != null and end != null">
+                and reporting_time between #{begin} and #{end}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

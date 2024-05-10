@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.domain.ds1.mapper.DustExceptionDataMapper">
+  <resultMap id="BaseResultMap" type="com.flightfeather.monitor.domain.ds1.entity.DustExceptionData">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mn_code" jdbcType="VARCHAR" property="mnCode" />
+    <result column="exception" jdbcType="VARCHAR" property="exception" />
+    <result column="exception_type" jdbcType="INTEGER" property="exceptionType" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="avg_value" jdbcType="DOUBLE" property="avgValue" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, mn_code, exception, exception_type, region, begin_time, end_time, avg_value
+  </sql>
+</mapper>

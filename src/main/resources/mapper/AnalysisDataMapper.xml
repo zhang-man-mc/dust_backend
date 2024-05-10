@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flightfeather.monitor.mapper.AnalysisDataMapper">
+
+
+    <select id="findByDevId" resultType="com.flightfeather.monitor.pojo.AnalysisData">
+    select * from fm_web_analysis_data
+    <where>
+        <if test="devId != null and devId != '' ">
+            fume_dev_id=#{devId}
+        </if>
+
+        <if test="begin != null and end != null">
+            and fume_date between #{begin} and #{end}
+        </if>
+    </where>
+    </select>
+
+<!--信息和数据未分开的数据表分析 ed_data-->
+<!--    <select id="find" resultType="AnalysisData">-->
+<!--        SELECT-->
+<!--        equipment_number as fume_dev_id,-->
+<!--        DATE(reporting_time) as fume_date,-->
+<!--        MIN(smoke_pop_density) as fume_day_min,-->
+
+<!--        MAX(smoke_pop_density) as fume_day_max,-->
+
+<!--        AVG(smoke_pop_density) as fume_day_average,-->
+
+<!--        CONCAT(ROUND(SUM(CASE WHEN smoke_pop_density > 0 and purifier > 0 THEN 1 ELSE 0 END)/144 * 100, 2), '%') as purifier_open_rate,-->
+<!--        SUM(CASE WHEN smoke_push_density >= 1 OR smoke_pop_density >= 1 THEN 1 ELSE 0 END) AS fume_minute_exceeding_num,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN smoke_push_density >= 1 OR smoke_pop_density >= 1 THEN 1 ELSE 0 END)/COUNT(*) * 100, 2), '%') as fume_over_standard_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN smoke_push_density > 0 OR smoke_pop_density > 0 THEN 1 ELSE 0 END)/COUNT(*) * 100, 2), '%') as fume_data_efficiency,-->
+
+<!--        CONCAT(ROUND(COUNT(*)/144 * 100, 2), '%') as daily_online_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59' THEN 1 ELSE 0 END)/24 * 100, 2), '%') as noon_online_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59' THEN 1 ELSE 0 END)/24 * 100, 2), '%') as night_online_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN (TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59') or (TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59') THEN 1 ELSE 0 END)/48 * 100, 2), '%') as key_online_rate,-->
+
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59' AND (smoke_push_density > 0 OR smoke_pop_density > 0) THEN 1 ELSE 0 END)/24 * 100, 2), '%') as noon_valid_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59' AND (smoke_push_density > 0 OR smoke_pop_density > 0) THEN 1 ELSE 0 END)/24* 100, 2), '%') as night_valid_rate,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN ((TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59') or (TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59')) AND (smoke_push_density > 0 OR smoke_pop_density > 0) THEN 1 ELSE 0 END)/48* 100, 2), '%') as key_valid_rate,-->
+
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59' THEN 1 ELSE 0 END) /24 * 100, 2), '%') as noon_opening_count,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59' THEN 1 ELSE 0 END) /24 * 100, 2), '%') as night_opening_count,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN (TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59') or (TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59') THEN 1 ELSE 0 END)/48 * 100, 2), '%') as 'key_opening_rate',-->
+
+<!--        SUM(CASE WHEN (TIME(attribution_time) BETWEEN '10:00:00' and '14:00:00') and (smoke_push_density >= 1 OR smoke_pop_density >= 1) THEN 1 ELSE 0 END) as noon_exceeding_num,-->
+<!--        SUM(CASE WHEN (TIME(attribution_time) BETWEEN '17:00:00' and '21:00:00') and (smoke_push_density >= 1 OR smoke_pop_density >= 1) THEN 1 ELSE 0 END) as night_exceeding_num,-->
+<!--        CONCAT(ROUND(SUM(CASE WHEN ((TIME(attribution_time) BETWEEN '10:00:00' and '13:59:59') or (TIME(attribution_time) BETWEEN '17:00:00' and '20:59:59'))and (smoke_push_density >= 1 OR smoke_pop_density >= 1) THEN 1 ELSE 0 END)/48 * 100, 2), '%') as key_exceeding_rate-->
+<!--        FROM-->
+<!--        ed_data-->
+<!--        <where>-->
+<!--            <if test="shopname != null and shopname != '' ">-->
+<!--                shop_name like concat('%',#{shopname},'%')-->
+<!--            </if>-->
+<!--            <if test="value != null and value != '' ">-->
+<!--                or shop_name like concat('%',#{value},'%')-->
+<!--            </if>-->
+<!--            <if test="begin != null and end != null">-->
+<!--               and reporting_time between #{begin} and #{end}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        GROUP BY equipment_number, DATE(reporting_time)-->
+<!--        limit 0,500-->
+<!--    </select>-->
+<!--新表-->
+    <select id="find" resultType="com.flightfeather.monitor.pojo.AnalysisData">
+        SELECT
+        a.MV_Stat_Code as fume_dev_id,
+
+        DATE(a.MV_Data_Time) as fume_date,
+        MIN(a.MV_Fume_Concentration2) as fume_day_min,
+
+        MAX(a.MV_Fume_Concentration2) as fume_day_max,
+
+        AVG(a.MV_Fume_Concentration2) as fume_day_average,
+
+        CONCAT(ROUND(SUM(CASE WHEN a.MV_Fume_Concentration2 > 0 and a.MV_Purifier_Electricity > 0 THEN 1 ELSE 0 END)/144 * 100, 2), '%') as purifier_open_rate,
+        SUM(CASE WHEN a.MV_Fume_Concentration >= 1 OR a.MV_Fume_Concentration2 >= 1 THEN 1 ELSE 0 END) AS fume_minute_exceeding_num,
+        CONCAT(ROUND(SUM(CASE WHEN a.MV_Fume_Concentration >= 1 OR a.MV_Fume_Concentration2 >= 1 THEN 1 ELSE 0 END)/COUNT(*) * 100, 2), '%') as fume_over_standard_rate,
+        CONCAT(ROUND(SUM(CASE WHEN a.MV_Fume_Concentration > 0 OR a.MV_Fume_Concentration2 > 0 THEN 1 ELSE 0 END)/COUNT(*) * 100, 2), '%') as fume_data_efficiency,
+
+        CONCAT(ROUND(COUNT(*)/144 * 100, 2), '%') as daily_online_rate,
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59' THEN 1 ELSE 0 END)/24 * 100, 2), '%') as noon_online_rate,
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59' THEN 1 ELSE 0 END)/24 * 100, 2), '%') as night_online_rate,
+        CONCAT(ROUND(SUM(CASE WHEN (TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59') or (TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59') THEN 1 ELSE 0 END)/48 * 100, 2), '%') as key_online_rate,
+
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59' AND (a.MV_Fume_Concentration > 0 OR a.MV_Fume_Concentration2 > 0) THEN 1 ELSE 0 END)/24 * 100, 2), '%') as noon_valid_rate,
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59' AND (a.MV_Fume_Concentration > 0 OR a.MV_Fume_Concentration2 > 0) THEN 1 ELSE 0 END)/24* 100, 2), '%') as night_valid_rate,
+        CONCAT(ROUND(SUM(CASE WHEN ((TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59') or (TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59')) AND (a.MV_Fume_Concentration > 0 OR a.MV_Fume_Concentration2 > 0) THEN 1 ELSE 0 END)/48* 100, 2), '%') as key_valid_rate,
+
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59' THEN 1 ELSE 0 END) /24 * 100, 2), '%') as noon_opening_count,
+        CONCAT(ROUND(SUM(CASE WHEN TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59' THEN 1 ELSE 0 END) /24 * 100, 2), '%') as night_opening_count,
+        CONCAT(ROUND(SUM(CASE WHEN (TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59') or (TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59') THEN 1 ELSE 0 END)/48 * 100, 2), '%') as 'key_opening_rate',
+
+        SUM(CASE WHEN (TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '14:00:00') and (a.MV_Fume_Concentration >= 1 OR a.MV_Fume_Concentration2 >= 1) THEN 1 ELSE 0 END) as noon_exceeding_num,
+        SUM(CASE WHEN (TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '21:00:00') and (a.MV_Fume_Concentration >= 1 OR a.MV_Fume_Concentration2 >= 1) THEN 1 ELSE 0 END) as night_exceeding_num,
+        CONCAT(ROUND(SUM(CASE WHEN ((TIME(a.MV_Data_Time) BETWEEN '10:00:00' and '13:59:59') or (TIME(a.MV_Data_Time) BETWEEN '17:00:00' and '20:59:59'))and (a.MV_Fume_Concentration >= 1 OR a.MV_Fume_Concentration2 >= 1) THEN 1 ELSE 0 END)/48 * 100, 2), '%') as key_exceeding_rate
+        FROM
+        fd_t_minutevalue as a
+        JOIN ea_t_device_info AS b ON a.MV_Stat_Code = b.DI_Code
+        <where>
+            <if test="shopname != null and shopname != '' ">
+                b.DI_Name like concat('%',#{shopname},'%')
+            </if>
+            <if test="value != null and value != '' ">
+                or b.DI_Name like concat('%',#{value},'%')
+            </if>
+            <if test="begin != null and end != null">
+                and a.MV_Data_Time between #{begin} and #{end}
+            </if>
+        </where>
+        GROUP BY a.MV_Stat_Code, DATE(a.MV_Data_Time)
+        limit 0,500
+    </select>
+
+
+    <!-- 去重-->
+    <select id="search" resultType="com.flightfeather.monitor.pojo.AnalysisData">
+        select a.*,b.DI_Name,b.DI_Supplier
+        from fm_web_analysis_data as a join ea_t_device_info as b on a.fume_dev_id = b.DI_Code
+        <where>
+            <if test="shopname != null and shopname != '' ">
+                a.fume_dev_id like concat('%',#{shopname},'%')
+            </if>
+            <if test="value != null and value != null">
+                and b.DI_Name = #{value}
+            </if>
+
+            <if test="begin != null and end != null">
+                and a.fume_date between #{begin} and #{end}
+            </if>
+        </where>
+    </select>
+</mapper>
