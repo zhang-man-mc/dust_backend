@@ -13,7 +13,7 @@
     <artifactId>monitor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>monitor</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <description>monitor manage</description>
 
     <properties>
