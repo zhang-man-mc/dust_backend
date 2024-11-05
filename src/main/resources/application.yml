@@ -7,13 +7,12 @@ spring:
 #      username: fume
 #      password: fume_feiyu2023
 
-      url: jdbc:mysql://${DATABASE_IP}/dust?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://${DATABASE_IP}/dust?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
       username: ${DATABASE_USER}
       password: ${DATABASE_PASS}
 
 
-#       虚拟机
-#      url: jdbc:mysql://192.168.1.138:3306/qianduan_sql?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
+#      url: jdbc:mysql://localhost:3306/qianduan_sql?serverTimezone=Asia/Shanghai&prepStmtCacheSize=517&cachePrepStmts=true&autoReconnect=true&allowMultiQueries=true&useSSL=false
 #      username: root
 #      password: 1234
 

@@ -10,7 +10,7 @@ function backend_to_remote() {
     docker save -o dust_backend.tar nizhenshi/dust_backend
 
     LOCAL_FILE=$backend_tar
-    REMOTE_FILE="/root/user/"
+    REMOTE_FILE="/root/user/dust"
     scp $LOCAL_FILE $ROMOTE_USER@$ROMOTE_HOST:$REMOTE_FILE
     if [[ $? -eq 0 ]];then
       echo "传输成功 $LOCAL_FILE"
